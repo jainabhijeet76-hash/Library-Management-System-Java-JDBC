@@ -11,31 +11,27 @@ import com.adda.dao.IssueRecordDAO;
 import com.adda.model.IssueRecord;
 import com.adda.utility.DBConnection;
 
-public class IssueRecordDAOImpl implements IssueRecordDAO 
-{
+public class IssueRecordDAOImpl implements IssueRecordDAO {
 
 	@Override
-	public void issueBook(IssueRecord issueRecord) 
-	{
+	public void issueBook(IssueRecord issueRecord) {
 
-		try 
-		{
+		try {
 
 			Connection con = DBConnection.getConnection();
 
-			String query = "insert into issue_records(book_id,member_id,issue_date,return_date) values(?,?,?,?)";
+			String query = "insert into issue_records(book_id, member_id, issue_date, return_date) values(?,?,?,?)";
 
 			PreparedStatement ps = con.prepareStatement(query);
 
 			ps.setInt(1, issueRecord.getBookId());
 			ps.setInt(2, issueRecord.getMemberId());
+
 			ps.setDate(3, java.sql.Date.valueOf(issueRecord.getIssueDate()));
 
-			ps.setDate(4, null);
+			ps.setNull(4, java.sql.Types.DATE);
 
 			ps.executeUpdate();
-
-			System.out.println("Book Issued Successfully");
 
 		} catch (Exception e) {
 
@@ -44,11 +40,9 @@ public class IssueRecordDAOImpl implements IssueRecordDAO
 	}
 
 	@Override
-	public void returnBook(int recordId) 
-	{
+	public void returnBook(int recordId) {
 
-		try
-		{
+		try {
 
 			Connection con = DBConnection.getConnection();
 
@@ -62,8 +56,6 @@ public class IssueRecordDAOImpl implements IssueRecordDAO
 
 			ps.executeUpdate();
 
-			System.out.println("Book Returned Successfully");
-
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -71,13 +63,54 @@ public class IssueRecordDAOImpl implements IssueRecordDAO
 	}
 
 	@Override
-	public List<IssueRecord> getIssuedBooks()
-	{
+	public IssueRecord getIssueRecordById(int recordId) {
+
+		IssueRecord record = null;
+
+		try {
+
+			Connection con = DBConnection.getConnection();
+
+			String query = "select * from issue_records where record_id=?";
+
+			PreparedStatement ps = con.prepareStatement(query);
+
+			ps.setInt(1, recordId);
+
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.next()) {
+
+				record = new IssueRecord();
+
+				record.setRecordId(rs.getInt("record_id"));
+
+				record.setBookId(rs.getInt("book_id"));
+
+				record.setMemberId(rs.getInt("member_id"));
+
+				record.setIssueDate(rs.getDate("issue_date").toLocalDate());
+
+				if (rs.getDate("return_date") != null) {
+
+					record.setReturnDate(rs.getDate("return_date").toLocalDate());
+				}
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return record;
+	}
+
+	@Override
+	public List<IssueRecord> getIssuedBooks() {
 
 		List<IssueRecord> records = new ArrayList<>();
 
-		try 
-		{
+		try {
 
 			Connection con = DBConnection.getConnection();
 
@@ -111,13 +144,11 @@ public class IssueRecordDAOImpl implements IssueRecordDAO
 	}
 
 	@Override
-	public List<IssueRecord> getOverdueBooks() 
-	{
+	public List<IssueRecord> getOverdueBooks() {
 
 		List<IssueRecord> records = new ArrayList<>();
 
-		try
-		{
+		try {
 
 			Connection con = DBConnection.getConnection();
 

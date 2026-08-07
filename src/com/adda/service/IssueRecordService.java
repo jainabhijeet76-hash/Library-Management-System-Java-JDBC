@@ -1,10 +1,10 @@
 package com.adda.service;
 
 import java.util.List;
+
 import com.adda.model.IssueRecord;
 
-public interface IssueRecordService 
-{
+public interface IssueRecordService {
 
     void issueBook(IssueRecord issueRecord);
 

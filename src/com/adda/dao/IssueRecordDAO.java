@@ -3,12 +3,13 @@ package com.adda.dao;
 import java.util.List;
 import com.adda.model.IssueRecord;
 
-public interface IssueRecordDAO 
-{
+public interface IssueRecordDAO {
 
     void issueBook(IssueRecord issueRecord);
 
     void returnBook(int recordId);
+
+    IssueRecord getIssueRecordById(int recordId);
 
     List<IssueRecord> getIssuedBooks();
 
